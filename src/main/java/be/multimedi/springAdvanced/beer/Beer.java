@@ -5,6 +5,7 @@ import be.multimedi.springAdvanced.category.Category;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Beers")
@@ -111,8 +112,24 @@ public class Beer implements Serializable {
                 ", stock=" + stock +
                 ", alcohol=" + alcohol +
                 ", version=" + version +
-                ", brewer=" + brewer +
-                ", category=" + category +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Beer beer = (Beer) o;
+        return getId() == beer.getId() &&
+                Float.compare(beer.getPrice(), getPrice()) == 0 &&
+                getStock() == beer.getStock() &&
+                Float.compare(beer.getAlcohol(), getAlcohol()) == 0 &&
+                getVersion() == beer.getVersion() &&
+                getName().equals(beer.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getPrice(), getStock(), getAlcohol(), getVersion());
     }
 }

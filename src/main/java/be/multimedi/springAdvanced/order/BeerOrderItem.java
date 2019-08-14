@@ -19,4 +19,37 @@ public class BeerOrderItem {
     @ManyToOne
     @JoinColumn(name = "BeerId")
     private Beer beer;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public Beer getBeer() {
+        return beer;
+    }
+
+    public void setBeer(Beer beer) {
+        this.beer = beer;
+    }
+
+    @Override
+    public String toString() {
+        return "BeerOrderItem{" +
+                "id=" + id +
+                ", number=" + number +
+                ", beer=" + beer +
+                '}';
+    }
 }
