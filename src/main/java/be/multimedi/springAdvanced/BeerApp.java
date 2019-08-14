@@ -13,7 +13,7 @@ public class BeerApp {
 
         System.out.println(dao.getBeerById(20));
 
-        dao.setStock(20, 100);
+        //dao.setStock(20, 100);
 
         dao.getBeerByAlcohol(2.0f).stream().forEach(System.out::println);
     }
