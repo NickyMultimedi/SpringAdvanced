@@ -1,77 +1,38 @@
 package be.multimedi.springAdvanced.beer;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Repository("beerRepository")
 public class BeerRepositoryImpl implements BeerRepository {
-    private EntityManagerFactory entityManagerFactory;
+    private EntityManager manager;
 
-    @PersistenceUnit
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
+    @PersistenceContext
+    public void setEntityManager(EntityManager entityManager) {
+        this.manager = entityManager;
     }
 
     @Override
+    @Transactional
     public Beer getBeerById(int id) {
-        EntityManager manager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = manager.getTransaction();
-
-        try {
-            transaction.begin();
-            Beer beer = manager.find(Beer.class, id);
-            transaction.commit();
-            return beer;
-        } catch (Exception ex) {
-            transaction.rollback();
-            throw ex;
-        } finally {
-            if (manager != null) {
-                manager.close();
-            }
-        }
+        return manager.find(Beer.class, id);
     }
 
     @Override
+    @Transactional
     public List<Beer> getBeerByAlcohol(float alcohol) {
-        EntityManager manager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = manager.getTransaction();
-
-        try {
-            TypedQuery<Beer> query = manager.createQuery("select b from Beer b where b.alcohol = ?1", Beer.class);
-            query.setParameter(1, alcohol);
-            transaction.begin();
-            List<Beer> beers = query.getResultList();
-            transaction.commit();
-            return beers;
-        } catch (Exception e) {
-            transaction.rollback();
-            throw e;
-        } finally {
-            if (manager != null) {
-                manager.close();
-            }
-        }
+        TypedQuery<Beer> query = manager.createQuery("select b from Beer b where b.alcohol = ?1", Beer.class);
+        query.setParameter(1, alcohol);
+        List<Beer> beers = query.getResultList();
+        return beers;
     }
 
     @Override
-    public void updateBeer(Beer b) {
-        EntityManager manager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = manager.getTransaction();
-
-        try {
-            transaction.begin();
-            manager.merge(b);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            throw e;
-        } finally {
-            if (manager != null) {
-                manager.close();
-            }
-        }
+    @Transactional
+    public void updateBeer(Beer beer) {
+        manager.merge(beer);
     }
 }
