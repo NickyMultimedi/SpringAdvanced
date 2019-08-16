@@ -1,66 +1,29 @@
 package be.multimedi.springAdvanced.order;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.*;
 
 @Repository("beerOrderRepository")
 public class BeerOrderRepositoryImpl implements BeerOrderRepository {
-    private EntityManagerFactory entityManagerFactory;
+    private EntityManager manager;
 
-    @PersistenceUnit
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
+    @PersistenceContext
+    public void setEntityManager(EntityManager entityManager) {
+        this.manager = entityManager;
     }
 
     @Override
+    @Transactional
     public int saveOrder(BeerOrder order) {
-        EntityManager manager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = manager.getTransaction();
-
-        try {
-            transaction.begin();
-
-            manager.persist(order);
-
-            transaction.commit();
-        } catch (Exception ex) {
-            transaction.rollback();
-            throw ex;
-        } finally {
-            if (manager != null) {
-                manager.close();
-            }
-        }
-
-        return order.getId() ;
+        manager.persist(order);
+        return order.getId();
     }
 
     @Override
+    @Transactional
     public BeerOrder getBeerOrderById(int id) {
-        BeerOrder order;
-
-        EntityManager manager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = manager.getTransaction();
-
-        try {
-            transaction.begin();
-
-            order = manager.find(BeerOrder.class, 1);
-
-            transaction.commit();
-        }
-        catch (Exception ex) {
-            transaction.rollback();
-            throw ex;
-        }
-        finally {
-            manager.close();
-        }
-
-        return order;
+        return manager.find(BeerOrder.class, id);
     }
 }
