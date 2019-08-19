@@ -25,11 +25,13 @@ class BeerOrderRepositoryTest {
 
     @Test
     void testSaveOrder() {
-        int id = repo.saveOrder(new BeerOrder());
+        BeerOrder order = new BeerOrder();
+        order.setName("SaveTest");
+        int id = repo.saveOrder(order);
 
         assertEquals(
-                2,
-                id
+                order.getName(),
+                repo.getBeerOrderById(id).getName()
         );
     }
 }
